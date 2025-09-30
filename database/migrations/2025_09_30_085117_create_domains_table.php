@@ -27,6 +27,10 @@ class CreateDomainsTable extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+
+            // Indexes for faster lookup
+            $table->index('tenant_id');
+            $table->index('status');
         });
     }
 

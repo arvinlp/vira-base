@@ -16,12 +16,15 @@ class CreateTenantsTable extends Migration
     public function up(): void
     {
         Schema::create('tenants', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
 
-            $table->foreignId('plan_id')->constrained('plans')->onDelete('set null')->onUpdate('cascade');
+            $table->foreignId('plan_id')
+                ->nullable()
+                ->constrained('plans')
+                ->onDelete('set null')
+                ->cascadeOnUpdate();
 
             $table->string('name_fa')->nullable();
-            $table->string('name_en')->nullable();
             $table->string('subdomain')->nullable();
             $table->string('website')->nullable();
             $table->text('address')->nullable();
@@ -31,11 +34,16 @@ class CreateTenantsTable extends Migration
             $table->integer('county_id')->nullable();
             $table->integer('city_id')->nullable();
 
+            $table->json('data')->nullable();
+
             $table->enum('status', ['active', 'inactive', 'expired'])->default('active');
 
             $table->timestamps();
             $table->softDeletes();
-            $table->json('data')->nullable();
+
+            // Indexes for faster lookup
+            $table->index('plan_id');
+            $table->index('status');
         });
     }
 

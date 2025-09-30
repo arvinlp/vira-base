@@ -14,6 +14,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasRoles;
 
     protected $table = 'tenant_users';
+    protected $guard_name = 'tenant';
 
     /**
      * The attributes that are mass assignable.

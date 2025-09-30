@@ -12,6 +12,9 @@ use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
 use Stancl\Tenancy\Middleware;
+use Spatie\Permission\PermissionRegistrar;
+use Stancl\Tenancy\Events\TenancyBootstrapped;
+use Stancl\Tenancy\Events\TenancyEnded;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -27,7 +30,7 @@ class TenancyServiceProvider extends ServiceProvider
                 JobPipeline::make([
                     Jobs\CreateDatabase::class,
                     Jobs\MigrateDatabase::class,
-                    // Jobs\SeedDatabase::class,
+                    Jobs\SeedDatabase::class,
 
                     // Your own jobs to prepare the tenant.
                     // Provision API keys, create S3 buckets, anything you want!
@@ -73,12 +76,22 @@ class TenancyServiceProvider extends ServiceProvider
             ],
 
             Events\EndingTenancy::class => [],
-            Events\TenancyEnded::class => [
-                Listeners\RevertToCentralContext::class,
+            Events\BootstrappingTenancy::class => [],
+
+            Events\TenancyBootstrapped::class => [
+                function (Events\TenancyBootstrapped $event) {
+                    $permissionRegistrar = app(\Spatie\Permission\PermissionRegistrar::class);
+                    $permissionRegistrar->cacheKey = 'spatie.permission.cache.tenant.' . $event->tenancy->tenant->getTenantKey();
+                }
             ],
 
-            Events\BootstrappingTenancy::class => [],
-            Events\TenancyBootstrapped::class => [],
+            Events\TenancyEnded::class => [
+                function (Events\TenancyEnded $event) {
+                    $permissionRegistrar = app(\Spatie\Permission\PermissionRegistrar::class);
+                    $permissionRegistrar->cacheKey = 'spatie.permission.cache';
+                }
+            ],
+
             Events\RevertingToCentralContext::class => [],
             Events\RevertedToCentralContext::class => [],
 
@@ -99,10 +112,16 @@ class TenancyServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->bootEvents();
-        $this->mapRoutes();
 
-        $this->makeTenancyMiddlewareHighestPriority();
+        Event::listen(TenancyBootstrapped::class, function (TenancyBootstrapped $event) {
+            $permissionRegistrar = app(PermissionRegistrar::class);
+            $permissionRegistrar->cacheKey = 'spatie.permission.cache.tenant.' . $event->tenancy->tenant->getTenantKey();
+        });
+
+        Event::listen(TenancyEnded::class, function () {
+            $permissionRegistrar = app(PermissionRegistrar::class);
+            $permissionRegistrar->cacheKey = 'spatie.permission.cache';
+        });
     }
 
     protected function bootEvents()

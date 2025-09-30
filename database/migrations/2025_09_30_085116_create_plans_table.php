@@ -21,6 +21,9 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+
+            // Indexes for faster lookup
+            $table->index('status');
         });
     }
 
