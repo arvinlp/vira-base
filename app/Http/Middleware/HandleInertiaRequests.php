@@ -8,44 +8,32 @@ use Inertia\Middleware;
 class HandleInertiaRequests extends Middleware
 {
     /**
-     * نام root view برای همه‌ی رندرهای Inertia
+     * The root template that is loaded on the first page visit.
+     *
+     * @var string
      */
     protected $rootView = 'app';
 
     /**
-     * تعیین نسخه‌ی assetها (برای cache busting)
+     * Determine the current asset version.
      */
-    public function version(Request $request): string|null
+    public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
     /**
-     * دیتاهای سراسری که به همه‌ی صفحات پاس داده میشه
+     * Define the props that are shared by default.
+     *
+     * @return array<string, mixed>
      */
     public function share(Request $request): array
     {
-        return array_merge(parent::share($request), [
-            // اطلاعات کاربر لاگین‌شده
+        return [
+            ...parent::share($request),
             'auth' => [
-                'user' => $request->user() ? [
-                    'id'    => $request->user()->id,
-                    'name'  => $request->user()->name,
-                    'email' => $request->user()->email,
-                ] : null,
+                'user' => $request->user(),
             ],
-
-            // فلش‌مسج‌ها (برای success یا error)
-            'flash' => [
-                'success' => fn () => $request->session()->get('success'),
-                'error'   => fn () => $request->session()->get('error'),
-            ],
-
-            // دیتاهای عمومی (مثلاً زبان یا تنظیمات)
-            'app' => [
-                'locale' => app()->getLocale(),
-                'name'   => config('app.name'),
-            ],
-        ]);
+        ];
     }
 }
