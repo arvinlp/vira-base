@@ -1,0 +1,16 @@
+{
+    "Dashboard": "nداشبورد",
+    "users": "Users",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "email": "Email Address",
+    "password": "Password",
+    "remember_me": "Remember Me",
+    "forgot_your_password": "Forgot Your Password?",
+    "name": "Name",
+    "confirm_password": "Confirm Password",
+    "reset_password": "Reset Password"
+}

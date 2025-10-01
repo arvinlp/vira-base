@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -29,11 +30,34 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $permission = $request->user()?->getAllPermissions()->pluck('name')->toArray();
+        $languages = json_decode(Setting::pull('languages'));
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'abilities' => $request->user()->getAllPermissions()->pluck('name'), // از Spatie
             ],
+
+            // Share app name and url
+            'appName' => config('app.name'),
+            'appUrl' => config('app.url'),
+            'appDebug' => env('APP_DEBUG'),
+            'appDemo' => env('APP_DEMO'),
+            'env' => [
+                'APP_ENV' => env('APP_ENV'),
+            ],
+            // اطلاعات tenant (در صورتی که multi-tenant فعال باشه)
+            'tenant' => function () {
+                $tenant = tenant();
+                if (!$tenant) return null;
+                return [
+                    'id' => $tenant->id,
+                    'name' => $tenant->name,
+                    'owner_id' => $tenant->owner_id,
+                ];
+            },
         ];
     }
 }
