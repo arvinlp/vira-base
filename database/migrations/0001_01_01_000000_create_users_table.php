@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
+
             $table->string('code')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
@@ -20,19 +23,23 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->timestamp('mobile_verified_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
+
+            $table->string('username')->unique();
             $table->string('password');
+
             $table->string('profile_photo_path', 2048)->nullable();
 
             $table->json('data')->nullable();
 
-            $table->enum('role', ['super_admin', 'admin', 'staff'])->default('staff');
             $table->enum('status', ['active', 'inactive', 'banned'])->default('active');
 
             $table->rememberToken();
             $table->timestamps();
 
             // Indexes for faster lookup
-            $table->index('role');
+            $table->index('username');
+            $table->index('mobile');
+            $table->index('email');
             $table->index('status');
         });
 

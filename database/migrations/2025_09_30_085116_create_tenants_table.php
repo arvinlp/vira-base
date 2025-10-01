@@ -34,6 +34,12 @@ class CreateTenantsTable extends Migration
             $table->integer('county_id')->nullable();
             $table->integer('city_id')->nullable();
 
+            $table->integer('domain_quantity')->nullable();
+            $table->integer('subdomain_quantity')->nullable();
+
+            $table->decimal('storage_size', 10, 2)->nullable()->comment('in GB')->default(1);
+            $table->decimal('bandwidth', 10, 2)->nullable()->comment('in GB')->default(1);
+
             $table->json('data')->nullable();
 
             $table->enum('status', ['active', 'inactive', 'expired'])->default('active');

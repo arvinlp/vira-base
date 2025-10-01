@@ -11,19 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->id();
-
-            $table->string('name')->nullable();
-            $table->text('description')->nullable();
-            $table->decimal('price', 32, 2)->nullable();
-            $table->json('features')->nullable();
-            $table->enum('status', ['active', 'inactive', 'expired'])->default('active');
-
+            $table->string('name')->unique();
+            $table->string('description')->nullable();
+            $table->string('version')->nullable();
+            $table->boolean('is_global')->default(false);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
-            $table->softDeletes();
 
             // Indexes for faster lookup
+            $table->index('is_global');
             $table->index('status');
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('modules');
     }
 };
