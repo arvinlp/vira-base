@@ -40,6 +40,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = ['nickname'];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -52,4 +54,50 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Scope a query to only include active admin.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope a query to only include active admin.
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'inactive');
+    }
+
+    /**
+     * Scope a query to only include active admin.
+     */
+    public function scopeBanned($query)
+    {
+        return $query->where('status', 'banned');
+    }
+
+    /**
+     * Summary of getNicknameAttribute
+     * @return string
+     */
+    public function getNicknameAttribute()
+    {
+        $firstName = $this->first_name ?? '';
+        $lastName = $this->last_name ?? '';
+        $nickname = trim("{$firstName} {$lastName}");
+        return $nickname ?? '--';
+    }
+
+    /**
+     * Get the user associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    // public function role()
+    // {
+    //     return $this->hasOne(Role::class, 'role_id');
+    // }
 }

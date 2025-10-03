@@ -1,114 +1,124 @@
-<script setup>
-import Checkbox from "@/Components/Checkbox.vue";
-import GuestLayout from "@/Layouts/GuestLayout.vue";
-import InputError from "@/Components/InputError.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
+<template>
+  <Head title="Login" />
+  <AuthLayout>
+    <form @submit.prevent="submit" class="space-y-4">
+      <h1 class="text-2xl font-bold mb-6">Login</h1>
 
-defineProps({
-  canResetPassword: {
-    type: Boolean,
-  },
-  status: {
-    type: String,
-  },
-});
+      <div>
+        <label class="block text-sm mb-1">Email</label>
+        <input
+          v-model="form.email"
+          type="email"
+          class="input w-full"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm mb-1">Password</label>
+        <input
+          v-model="form.password"
+          type="password"
+          class="input w-full"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn-primary w-full">Login</button>
+
+      <div class="mt-4 text-sm text-center">
+        You don't have an account?
+        <Link :href="route('register')" class="text-blue-600">Register</Link>
+      </div>
+      <template v-if="stats.appDemo">
+        <hr />
+        <div class="mt-6">
+          <p class="text-center text-gray-500 mb-3">Demo Login</p>
+          <div class="grid grid-cols-3 gap-3">
+            <button
+              @click="demoLogin('admin')"
+              class="bg-red-500 text-white py-2 rounded hover:bg-red-600"
+            >
+              Admin
+            </button>
+            <button
+              @click="demoLogin('staff')"
+              class="bg-green-500 text-white py-2 rounded hover:bg-green-600"
+            >
+              Staff
+            </button>
+            <button
+              @click="demoLogin('client')"
+              class="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+            >
+              Client
+            </button>
+          </div>
+        </div>
+      </template>
+    </form>
+  </AuthLayout>
+</template>
+
+<script setup>
+import AuthLayout from "@/Layouts/AuthLayout.vue";
+import { ref } from "vue";
+import { Head, useForm, Link, usePage } from "@inertiajs/vue3";
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
+const page = usePage();
 
 const form = useForm({
   email: "",
   password: "",
   remember: false,
 });
+//
+function demoLogin(role) {
+  let demoUsers = {
+    admin: { email: "admin@example.com", password: "password" },
+    staff: { email: "staff@example.com", password: "password" },
+    client: { email: "client@example.com", password: "password" },
+  };
 
-const submit = () => {
+  form.email = demoUsers[role].email;
+  form.password = demoUsers[role].password;
+  form.post(route("login"));
+}
+//
+function submit() {
   form.post(route("login"), {
-    onFinish: () => form.reset("password"),
+    onError: (errors) => {
+      if (errors.email) {
+        toast.add({
+          severity: "error",
+          summary: "Login Failed",
+          detail: errors.email,
+          life: 4000,
+        });
+      }
+      if (errors.password) {
+        toast.add({
+          severity: "error",
+          summary: "Login Failed",
+          detail: errors.password,
+          life: 4000,
+        });
+      }
+    },
+    onSuccess: () => {
+      toast.add({
+        severity: "success",
+        summary: "Welcome",
+        detail: "You are logged in successfully",
+        life: 3000,
+      });
+    },
   });
-};
+}
+//
+const stats = ref({
+  appDemo: page.props.appDemo || false,
+});
 </script>
-
-<template>
-  <GuestLayout>
-    <Head title="Log in" />
-    <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-      {{ status }}
-    </div>
-
-    <form @submit.prevent="submit">
-      <div>
-        <InputLabel for="email" value="Email" />
-
-        <TextInput
-          id="email"
-          type="email"
-          class="mt-1 block w-full"
-          v-model="form.email"
-          required
-          autofocus
-          autocomplete="username"
-        />
-
-        <InputError class="mt-2" :message="form.errors.email" />
-      </div>
-
-      <div class="mt-4">
-        <InputLabel for="password" value="Password" />
-
-        <TextInput
-          id="password"
-          type="password"
-          class="mt-1 block w-full"
-          v-model="form.password"
-          required
-          autocomplete="current-password"
-        />
-
-        <InputError class="mt-2" :message="form.errors.password" />
-      </div>
-
-      <div class="mt-4 block">
-        <label class="flex items-center">
-          <Checkbox name="remember" v-model:checked="form.remember" />
-          <span class="ms-2 text-sm text-gray-600">Remember me</span>
-        </label>
-      </div>
-
-      <div class="mt-4 flex items-center justify-end">
-        <Link
-          v-if="canResetPassword"
-          :href="route('password.request')"
-          class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Forgot your password?
-        </Link>
-
-        <PrimaryButton
-          class="ms-4"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-        >
-          Log in
-        </PrimaryButton>
-      </div>
-      <template v-if="usePage().props.appDemo">
-        <div class="mt-4 border-t pt-4 text-sm text-gray-600">
-          <p>Admin Demo Credentials:</p>
-          <p class="mt-1">Email: <code>admin@example.com</code></p>
-          <p class="mt-1">Password: <code>password</code></p>
-        </div>
-        <div class="mt-4 border-t pt-4 text-sm text-gray-600">
-          <p>Staff Demo Credentials:</p>
-          <p class="mt-1">Email: <code>staff@example.com</code></p>
-          <p class="mt-1">Password: <code>password</code></p>
-        </div>
-        <div class="mt-4 border-t pt-4 text-sm text-gray-600">
-          <p>Client Demo Credentials:</p>
-          <p class="mt-1">Email: <code>client@example.com</code></p>
-          <p class="mt-1">Password: <code>password</code></p>
-        </div>
-      </template>
-    </form>
-  </GuestLayout>
-</template>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -32,13 +33,22 @@ class HandleInertiaRequests extends Middleware
     {
         $permission = $request->user()?->getAllPermissions()->pluck('name')->toArray();
         $languages = json_decode(Setting::pull('languages'));
+        if ($user = $request->user()) {
+            $roleName = null;
+            if ($role = Role::find($user->role_id))
+                $roleName = $role->name;
+            $auth = [
+                'user' => $user,
+                'role' => $roleName,
+                'abilities' => $user->getAllPermissions()->pluck('name'),
+            ];
+        } else {
+            $auth = null;
+        }
 
         return [
             ...parent::share($request),
-            'auth' => [
-                'user' => $request->user(),
-                'abilities' => $request->user()->getAllPermissions()->pluck('name'), // از Spatie
-            ],
+            'auth' => $auth,
 
             // Share app name and url
             'appName' => config('app.name'),
