@@ -3,53 +3,40 @@
   <AppLayout>
     <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <Link
-        :href="route('staffs.index')"
-        class="bg-white shadow p-4 rounded hover:shadow-md transition block"
-      >
-        <h3 class="text-sm text-gray-500 flex items-center gap-2">
-          <i class="pi pi-users"></i>
-          Staffs
-        </h3>
-        <p class="text-2xl font-bold text-center">
-          {{ stats.staffs }}
-        </p>
-      </Link>
-
-      <Link
-        :href="route('clients.index')"
-        class="bg-white shadow p-4 rounded hover:shadow-md transition block"
-      >
-        <h3 class="text-sm text-gray-500 flex items-center gap-2">
-          <i class="pi pi-user"></i>
-          Clients
-        </h3>
-        <p class="text-2xl font-bold text-center">
-          {{ stats.users }}
-        </p>
-      </Link>
-
-      <Link
-        :href="route('activities.index')"
-        class="bg-white shadow p-4 rounded hover:shadow-md transition block"
-      >
-        <h3 class="text-sm text-gray-500 flex items-center gap-2">
-          <i class="pi pi-bars"></i>
-          Activities
-        </h3>
-        <p class="text-2xl font-bold text-center">
-          {{ stats.activities }}
-        </p>
-      </Link>
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+      <StatCard
+        title="Staffs"
+        icon="pi pi-users"
+        :value="stats.staffs"
+        :route="route('panel.staffs.index')"
+      />
+      <StatCard
+        title="Clients"
+        icon="pi pi-user"
+        :value="stats.users"
+        :route="route('panel.clients.index')"
+      />
+      <StatCard
+        title="Tenants"
+        icon="pi pi-bars"
+        :value="stats.tenants"
+        :route="route('panel.tenants.index')"
+      />
+      <StatCard
+        title="Activities"
+        icon="pi pi-bars"
+        :value="stats.activities"
+        :route="route('panel.clients.index')"
+      />
     </div>
   </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
+import StatCard from "@/Components/StatCard.vue";
 import { ref } from "vue";
-import { Head, usePage, Link } from "@inertiajs/vue3";
+import { Head, usePage } from "@inertiajs/vue3";
 
 const page = usePage();
 

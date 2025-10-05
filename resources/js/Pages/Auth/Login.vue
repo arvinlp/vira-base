@@ -6,7 +6,7 @@
 
       <div>
         <label class="block text-sm mb-1">Email</label>
-        <input
+        <InputText
           v-model="form.email"
           type="email"
           class="input w-full"
@@ -16,7 +16,7 @@
 
       <div>
         <label class="block text-sm mb-1">Password</label>
-        <input
+        <InputText
           v-model="form.password"
           type="password"
           class="input w-full"
@@ -24,7 +24,10 @@
         />
       </div>
 
-      <button type="submit" class="btn-primary w-full">Login</button>
+      <Button type="submit" class="p-button-primary w-full" raised>
+        <i class="pi pi-sign-in mr-2"></i>
+        Login
+      </Button>
 
       <div class="mt-4 text-sm text-center">
         You don't have an account?
@@ -35,24 +38,30 @@
         <div class="mt-6">
           <p class="text-center text-gray-500 mb-3">Demo Login</p>
           <div class="grid grid-cols-3 gap-3">
-            <button
+            <Button
               @click="demoLogin('admin')"
-              class="bg-red-500 text-white py-2 rounded hover:bg-red-600"
+              severity="warn"
+              variant="outlined"
+              raised
             >
               Admin
-            </button>
-            <button
+            </Button>
+            <Button
               @click="demoLogin('staff')"
-              class="bg-green-500 text-white py-2 rounded hover:bg-green-600"
+              severity="info"
+              variant="outlined"
+              raised
             >
               Staff
-            </button>
-            <button
+            </Button>
+            <Button
               @click="demoLogin('client')"
-              class="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+              severity="help"
+              variant="outlined"
+              raised
             >
               Client
-            </button>
+            </Button>
           </div>
         </div>
       </template>
@@ -65,6 +74,8 @@ import AuthLayout from "@/Layouts/AuthLayout.vue";
 import { ref } from "vue";
 import { Head, useForm, Link, usePage } from "@inertiajs/vue3";
 import { useToast } from "primevue/usetoast";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
 
 const toast = useToast();
 const page = usePage();

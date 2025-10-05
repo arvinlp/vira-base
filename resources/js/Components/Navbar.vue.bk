@@ -1,0 +1,80 @@
+<script setup>
+import { inject } from "vue";
+import { router } from "@inertiajs/vue3";
+import Button from "primevue/button";
+
+const props = defineProps({
+  toggleSidebar: Function,
+  isDark: Boolean,
+  toggleDarkMode: Boolean,
+});
+
+const isDark = inject("isDark");
+const toggleDarkMode = inject("toggleDarkMode");
+
+function logout() {
+  const token = document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+
+  fetch(route("logout"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-TOKEN": token,
+      Accept: "application/json",
+    },
+    credentials: "same-origin",
+  }).then(() => {
+    router.visit(route("login"));
+  });
+}
+</script>
+
+<template>
+  <header
+    class="flex items-center justify-between px-6 py-3 shadow"
+    :class="props.isDark ? 'bg-gray-800' : 'bg-white'"
+  >
+    <div class="flex items-center gap-4">
+      <div class="md:hidden">
+        <Button
+          class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+          @click="$emit('toggleSidebar')"
+        >
+          <i class="pi pi-bars"></i>
+        </Button>
+      </div>
+
+      <Button
+        :icon="props.isDark ? 'pi pi-sun' : 'pi pi-moon'"
+        class="p-button-rounded p-button-outlined"
+        @click="toggleDarkMode"
+      />
+
+      <h1
+        class="font-bold text-lg"
+        :class="props.isDark ? 'text-gray-100' : 'text-gray-900'"
+      >
+        Panel
+      </h1>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span :class="props.isDark ? 'text-gray-100' : 'text-gray-900'">
+        {{ $page.props.auth.user.nickname }}
+      </span>
+      <button
+        @click="logout"
+        class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <i
+          :class="[
+            'pi pi-sign-out',
+            props.isDark ? 'text-gray-100' : 'text-gray-900',
+          ]"
+        ></i>
+      </button>
+    </div>
+  </header>
+</template>

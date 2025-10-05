@@ -30,7 +30,10 @@ createInertiaApp({
                 theme: {
                     preset: Aura,
                     options: {
-                        darkModeSelector: '.p-dark'
+                        prefix: 'p',
+                        darkModeSelector: 'system',
+                        cssLayer: false,
+                        darkModeSelector: '.my-app-dark'
                     }
                 }
             })

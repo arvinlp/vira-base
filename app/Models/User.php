@@ -22,11 +22,12 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'mobile',
+        'username',
         'email',
         'password',
         'email_verified_at',
         'profile_photo_path',
-        'role',
+        'role_id',
         'status',
     ];
 
