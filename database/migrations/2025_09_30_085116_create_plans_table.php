@@ -16,9 +16,13 @@ return new class extends Migration
 
             $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->decimal('price', 32, 2)->nullable();
             $table->json('features')->nullable();
-            $table->enum('status', ['active', 'inactive', 'expired'])->default('active');
+            $table->boolean('is_demo')->default(false);
+            $table->boolean('is_free')->default(false);
+            $table->json('price')->nullable();
+            $table->integer('max_users')->default(0);
+            $table->integer('max_storage_mb')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
 
             $table->timestamps();
             $table->softDeletes();

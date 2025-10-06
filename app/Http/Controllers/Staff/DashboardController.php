@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\User as Staff;
 use Illuminate\Http\Request;
@@ -15,7 +17,9 @@ class DashboardController extends Controller
             'stats' => [
                 'staffs' => Staff::count(),
                 'users' => User::count(),
-                'activities' => 15, // مثال
+                'roles' => Role::count(),
+                'permissions' => Permission::count(),
+                'activities' => 15,
             ]
         ]);
     }

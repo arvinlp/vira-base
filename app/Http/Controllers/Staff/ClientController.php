@@ -14,13 +14,21 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $data = User::where('id', '!=', $this->user->id)->active()->role(['client'])->get();
-        $roles = Role::where('guard_name', 'web')->get()->map(function ($role) {
-            return [
-                'id' => $role->id,
-                'name' => $role->name,
-            ];
-        })->toArray();
+        $clientRoles = Role::where('type', 'client')->pluck('name')->toArray();
+        $data = User::where('id', '!=', $this->user->id)
+            ->active()
+            ->role($clientRoles)
+            ->get();
+        $roles = Role::where('guard_name', 'web')
+            ->where('type', 'client')
+            ->get()
+            ->map(function ($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                ];
+            })
+            ->toArray();
         return self::getViewStaff('Clients', [
             'data' => $data,
             'roles' => $roles

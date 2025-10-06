@@ -17,12 +17,18 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('version')->nullable();
             $table->boolean('is_global')->default(false);
+            $table->string('type')->nullable();
+            $table->string('min_core_version')->nullable();
+            $table->boolean('requires_plan')->default(false);
+            $table->json('settings')->nullable();
+            $table->string('path')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
 
             // Indexes for faster lookup
             $table->index('is_global');
             $table->index('status');
+            $table->index('type');
         });
     }
 

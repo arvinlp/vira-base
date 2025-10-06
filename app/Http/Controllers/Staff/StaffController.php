@@ -14,13 +14,21 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $data = User::where('id', '!=', $this->user->id)->active()->role(['admin', 'staff'])->get();
-        $roles = Role::where('guard_name', 'web')->get()->map(function ($role) {
-            return [
-                'id' => $role->id,
-                'name' => $role->name,
-            ];
-        })->toArray();
+        $staffRoles = Role::whereIn('type', ['admin','staff'])->pluck('name')->toArray();
+        $data = User::where('id', '!=', $this->user->id)
+            ->active()
+            ->role($staffRoles)
+            ->get();
+        $roles = Role::where('guard_name', 'web')
+            ->whereIn('type', ['admin', 'staff'])
+            ->get()
+            ->map(function ($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                ];
+            })
+            ->toArray();
         return self::getViewStaff('Staffs', [
             'data' => $data,
             'roles' => $roles

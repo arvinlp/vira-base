@@ -20,14 +20,40 @@
         sortMode="multiple"
         responsiveLayout="scroll"
         class="shadow rounded"
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        v-model:filters="filters"
+        :globalFilterFields="['first_name', 'last_name', 'email', 'mobile']"
       >
-        <Column field="id" header="ID" sortable />
+        <template #header>
+          <div class="flex flex-row">
+            <div
+              class="font-bold text-lg flex-grow items-center vertical-center"
+            >
+              Client List
+            </div>
+            <div class="flex items-center">
+              <IconField>
+                <InputIcon>
+                  <i class="pi pi-search" />
+                </InputIcon>
+                <InputText
+                  v-model="filters['global'].value"
+                  placeholder="Keyword Search"
+                />
+              </IconField>
+            </div>
+          </div>
+        </template>
+        <Column field="id" class="w-16" header="ID" sortable />
         <Column field="first_name" header="Nickname" sortable />
         <Column field="username" header="Username" sortable />
         <Column field="email" header="Email" sortable />
-        <Column field="status" header="Status" sortable />
+        <Column field="status" class="w-32" header="Status" sortable />
 
-        <Column header="Actions" :exportable="false">
+        <Column class="w-48" :exportable="false">
+          <template #header>
+            <span class="font-semibold text-center">Actions</span>
+          </template>
           <template #body="slotProps">
             <Button
               icon="pi pi-key"
@@ -195,12 +221,19 @@ import Column from "primevue/column";
 import Button from "primevue/button";
 import Select from "primevue/select";
 import InputText from "primevue/inputtext";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
 import InputGroup from "primevue/inputgroup";
 import DynamicModal from "@/Components/Modal.vue";
 import DynamicToast from "@/Components/Toast.vue";
 import { useToast } from "primevue/usetoast";
+import { FilterMatchMode } from "@primevue/core/api";
 
 const page = usePage();
+
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 
 // Reactive state
 const clients = ref([...page.props.data]);
@@ -257,6 +290,7 @@ function saveClient() {
           severity: "success",
           summary: "Updated",
           detail: "Client updated successfully",
+          life: 3000,
         });
         modalVisible.value = false;
         router.reload({ only: ["data"] });
@@ -266,6 +300,7 @@ function saveClient() {
           severity: "error",
           summary: "Error",
           detail: "Failed to update client",
+          life: 3000,
         });
       },
     });
@@ -277,6 +312,7 @@ function saveClient() {
           severity: "success",
           summary: "Created",
           detail: "Client created successfully",
+          life: 3000,
         });
         modalVisible.value = false;
         router.reload({ only: ["data"] });
@@ -286,6 +322,7 @@ function saveClient() {
           severity: "error",
           summary: "Error",
           detail: "Failed to create client",
+          life: 3000,
         });
       },
     });
@@ -307,6 +344,7 @@ function deleteClient() {
         severity: "success",
         summary: "Deleted",
         detail: "Client deleted successfully",
+        life: 3000,
       });
     },
   });
@@ -337,6 +375,7 @@ function updatePassword() {
           severity: "success",
           summary: "Password Updated",
           detail: "Password changed successfully",
+          life: 3000,
         });
         passwordModalVisible.value = false;
       },
@@ -345,6 +384,7 @@ function updatePassword() {
           severity: "error",
           summary: "Error",
           detail: "Failed to update password",
+          life: 3000,
         });
       },
     }

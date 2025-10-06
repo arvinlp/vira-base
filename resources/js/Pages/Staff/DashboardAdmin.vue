@@ -23,6 +23,18 @@
         :route="route('panel.tenants.index')"
       />
       <StatCard
+        title="Roles"
+        icon="pi pi-shield"
+        :value="stats.roles"
+        :route="route('panel.roles.index')"
+      />
+      <StatCard
+        title="Permissions"
+        icon="pi pi-key"
+        :value="stats.permissions"
+        :route="route('panel.permissions.index')"
+      />
+      <StatCard
         title="Activities"
         icon="pi pi-bars"
         :value="stats.activities"

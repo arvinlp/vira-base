@@ -177,14 +177,18 @@ class UsersSeeder extends Seeder
 
         // تعریف Roles و اختصاص Permissions
         $roles = [
-            'admin' => $permissions,
-            'staff' => $staffPermissions,
-            'client' => $clientPermissions
+            'admin' => ['permissions' => $permissions, 'type' => 'admin'],
+            'staff' => ['permissions' => $staffPermissions, 'type' => 'staff'],
+            'client' => ['permissions' => $clientPermissions, 'type' => 'client']
         ];
 
         foreach ($roles as $roleName => $rolePerms) {
-            $role = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-            $role->syncPermissions($rolePerms);
+            $role = Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'web',
+                'type' => $rolePerms['type']
+            ]);
+            $role->syncPermissions($rolePerms['permissions']);
         }
 
         // ایجاد Super Admin نمونه

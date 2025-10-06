@@ -14,7 +14,7 @@
         :isDark="isDark"
         @toggleDarkMode="toggleDarkMode"
       />
-      <main class="p-6">
+      <main class="p-6 flex-1 overflow-y-auto">
         <slot />
       </main>
     </div>

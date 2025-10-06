@@ -9,6 +9,12 @@ const menuItems = ref([
   { label: "Dashboard", icon: "pi pi-home", link: route("panel.dashboard") },
   { label: "Staffs", icon: "pi pi-users", link: route("panel.staffs.index") },
   { label: "Clients", icon: "pi pi-user", link: route("panel.clients.index") },
+  { label: "Roles", icon: "pi pi-shield", link: route("panel.roles.index") },
+  { label: "Permissions", icon: "pi pi-lock", link: route("panel.permissions.index") },
+  { label: "Plans", icon: "pi pi-briefcase", link: route("panel.plans.index") },
+  { label: "Tenants", icon: "pi pi-building", link: route("panel.tenants.index") },
+  { label: "Profile", icon: "pi pi-user-edit", link: route("panel.profile.edit") },
+  { label: "Logout", icon: "pi pi-sign-out", link: route("logout") },
 ]);
 
 // Props برای موبایل و دارک مود
