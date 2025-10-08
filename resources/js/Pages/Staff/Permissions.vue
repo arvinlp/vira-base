@@ -27,7 +27,9 @@
       >
         <template #header>
           <div class="flex flex-row">
-            <div class="font-bold text-lg flex-grow items-center vertical-center">
+            <div
+              class="font-bold text-lg flex-grow items-center vertical-center"
+            >
               Permission List
             </div>
             <div class="flex items-center">
@@ -135,6 +137,7 @@ import { useToast } from "primevue/usetoast";
 import { FilterMatchMode } from "@primevue/core/api";
 
 const page = usePage();
+const errors = page.errors || {};
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -191,17 +194,19 @@ function savePermission() {
           severity: "success",
           summary: "Updated",
           detail: "Permission updated successfully",
-          life: 3000
+          life: 3000,
         });
         router.reload({ only: ["data"] });
         modalVisible.value = false;
       },
       onError: (errors) => {
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to update permission",
-          life: 3000
+        Object.values(errors).forEach((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Validation Error",
+            detail: error,
+            life: 3000,
+          });
         });
       },
     });
@@ -213,17 +218,19 @@ function savePermission() {
           severity: "success",
           summary: "Created",
           detail: "Permission created successfully",
-          life: 3000
+          life: 3000,
         });
         router.reload({ only: ["data"] });
         modalVisible.value = false;
       },
       onError: (errors) => {
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to create permission",
-          life: 3000
+        Object.values(errors).forEach((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Validation Error",
+            detail: error,
+            life: 3000,
+          });
         });
       },
     });
@@ -247,7 +254,17 @@ function deletePermission() {
           severity: "success",
           summary: "Deleted",
           detail: "Permission deleted successfully",
-          life: 3000
+          life: 3000,
+        });
+      },
+      onError: (errors) => {
+        Object.values(errors).forEach((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Validation Error",
+            detail: error,
+            life: 3000,
+          });
         });
       },
     }

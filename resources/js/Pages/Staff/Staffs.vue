@@ -22,7 +22,7 @@
         class="shadow rounded"
         :rowsPerPageOptions="[5, 10, 20, 50]"
         v-model:filters="filters"
-        :globalFilterFields="['first_name', 'last_name', 'email','mobile']"
+        :globalFilterFields="['first_name', 'last_name', 'email', 'mobile']"
       >
         <template #header>
           <div class="flex flex-row">
@@ -48,7 +48,19 @@
         <Column field="first_name" header="Nickname" sortable />
         <Column field="username" header="Username" sortable />
         <Column field="email" header="Email" sortable />
-        <Column field="status" class="w-32" header="Status" sortable />
+        <Column field="status" class="w-32" header="Status" sortable>
+          <template #body="slotProps">
+            <span
+              :class="{
+                'px-2 py-1 rounded-full text-white text-sm font-semibold capitalize': true,
+                'bg-green-500': slotProps.data.status === 'active',
+                'bg-gray-500': slotProps.data.status === 'inactive',
+              }"
+            >
+              {{ slotProps.data.status }}
+            </span>
+          </template>
+        </Column>
 
         <Column class="w-48" :exportable="false">
           <template #header>
@@ -230,6 +242,7 @@ import { useToast } from "primevue/usetoast";
 import { FilterMatchMode } from "@primevue/core/api";
 
 const page = usePage();
+const errors = page.errors || {};
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -290,17 +303,19 @@ function saveStaff() {
           severity: "success",
           summary: "Updated",
           detail: "Staff updated successfully",
-          life: 3000
+          life: 3000,
         });
         modalVisible.value = false;
         router.reload({ only: ["data"] });
       },
       onError: (errors) => {
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to update staff",
-          life: 3000
+        Object.values(errors).forEach((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Validation Error",
+            detail: error,
+            life: 3000,
+          });
         });
       },
     });
@@ -312,17 +327,19 @@ function saveStaff() {
           severity: "success",
           summary: "Created",
           detail: "Staff created successfully",
-          life: 3000
+          life: 3000,
         });
         modalVisible.value = false;
         router.reload({ only: ["data"] });
       },
       onError: (errors) => {
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to create staff",
-          life: 3000
+        Object.values(errors).forEach((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Validation Error",
+            detail: error,
+            life: 3000,
+          });
         });
       },
     });
@@ -344,7 +361,17 @@ function deleteStaff() {
         severity: "success",
         summary: "Deleted",
         detail: "Staff deleted successfully",
-          life: 3000
+        life: 3000,
+      });
+    },
+    onError: (errors) => {
+      Object.values(errors).forEach((error) => {
+        toast.add({
+          severity: "error",
+          summary: "Validation Error",
+          detail: error,
+          life: 3000,
+        });
       });
     },
   });
@@ -375,16 +402,18 @@ function updatePassword() {
           severity: "success",
           summary: "Password Updated",
           detail: "Password changed successfully",
-          life: 3000
+          life: 3000,
         });
         passwordModalVisible.value = false;
       },
-      onError: () => {
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to update password",
-          life: 3000
+      onError: (errors) => {
+        Object.values(errors).forEach((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Validation Error",
+            detail: error,
+            life: 3000,
+          });
         });
       },
     }

@@ -1,12 +1,12 @@
 <template>
-  <Head title="Plans" />
+  <Head title="Tenants" />
 
   <AppLayout>
     <template #default>
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-semibold">Plans</h2>
+        <h2 class="text-2xl font-semibold">Tenants</h2>
         <Button
-          label="New Plan"
+          label="New Tenant"
           icon="pi pi-plus"
           class="p-button-success"
           @click="openModal('new')"
@@ -14,7 +14,7 @@
       </div>
 
       <DataTable
-        :value="plans"
+        :value="tenants"
         paginator
         :rows="10"
         sortMode="multiple"
@@ -29,7 +29,7 @@
             <div
               class="font-bold text-lg flex-grow items-center vertical-center"
             >
-              Plan List
+              Tenant List
             </div>
             <div class="flex items-center">
               <IconField>
@@ -125,7 +125,7 @@
         :title="modalTitle"
         :header="modalTitle"
         size="large"
-        @save="savePlan"
+        @save="saveTenant"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
@@ -177,7 +177,7 @@
           <div class="flex gap-2">
             <div class="flex items-center gap-2">
               <label for="is_free" class="block text-sm mb-1"
-                >is Free Plan</label
+                >is Free Tenant</label
               >
               <ToggleSwitch
                 v-model="form.is_free"
@@ -189,7 +189,7 @@
             </div>
             <div class="flex items-center gap-2">
               <label for="is_demo" class="block text-sm mb-1"
-                >is Demo Plan</label
+                >is Demo Tenant</label
               >
               <ToggleSwitch
                 v-model="form.is_demo"
@@ -303,11 +303,11 @@
         title="Confirm Delete"
         header="Confirm Delete"
         size="small"
-        @save="deletePlan"
+        @save="deleteTenant"
       >
         <p>
           Are you sure you want to delete
-          <strong>{{ selectedPlan?.username }}</strong
+          <strong>{{ selectedTenant?.username }}</strong
           >?
         </p>
       </DynamicModal>
@@ -349,14 +349,14 @@ const filters = ref({
 });
 
 // Reactive state
-const plans = ref([...page.props.data]);
+const tenants = ref([...page.props.data]);
 const deleteModalVisible = ref(false);
-const selectedPlan = ref(null);
+const selectedTenant = ref(null);
 const modalVisible = ref(false);
 const modalTitle = ref("");
 const form = ref({
   id: null,
-  name: "Plan",
+  name: "Tenant",
   price: [{ label: "Monthly", amount: 0 }],
   description: "",
   features: [{ label: "Users", description: "10 Users" }],
@@ -373,12 +373,12 @@ const status = ref([
 const toast = useToast();
 
 // Open modal for create or edit
-function openModal(type, plan = null) {
+function openModal(type, tenant = null) {
   if (type === "new") {
-    modalTitle.value = "Create Plan";
+    modalTitle.value = "Create Tenant";
     form.value = {
       id: null,
-      name: "Plan",
+      name: "Tenant",
       price: [{ label: "Monthly", amount: 10 }],
       description: "Description text for testing.",
       features: [{ label: "Users", description: "10 Users" }],
@@ -389,17 +389,17 @@ function openModal(type, plan = null) {
       is_demo: false,
     };
   } else if (type === "edit") {
-    modalTitle.value = "Edit Plan";
-    form.value = { ...plan };
+    modalTitle.value = "Edit Tenant";
+    form.value = { ...tenant };
   }
   modalVisible.value = true;
 }
 
-// Save plan (create or update)
-function savePlan() {
+// Save tenant (create or update)
+function saveTenant() {
   if (form.value.id) {
     // Update
-    router.patch(route("panel.plans.update", form.value.id), form.value, {
+    router.patch(route("panel.tenants.update", form.value.id), form.value, {
       onSuccess: (success) => {
         toast.add({
           severity: "success",
@@ -423,7 +423,7 @@ function savePlan() {
     });
   } else {
     // Create
-    router.post(route("panel.plans.store"), form.value, {
+    router.post(route("panel.tenants.store"), form.value, {
       onSuccess: () => {
         toast.add({
           severity: "success",
@@ -449,19 +449,19 @@ function savePlan() {
 }
 
 // Confirm delete
-function confirmDelete(plan) {
-  selectedPlan.value = plan;
+function confirmDelete(tenant) {
+  selectedTenant.value = tenant;
   deleteModalVisible.value = true;
 }
-function deletePlan() {
-  router.delete(route("panel.plans.destroy", selectedPlan.value.id), {
+function deleteTenant() {
+  router.delete(route("panel.tenants.destroy", selectedTenant.value.id), {
     onSuccess: () => {
       router.reload({ only: ["data"] }); // refresh list
       deleteModalVisible.value = false;
       toast.add({
         severity: "success",
         summary: "Deleted",
-        detail: "Plan deleted successfully",
+        detail: "Tenant deleted successfully",
         life: 3000,
       });
     },

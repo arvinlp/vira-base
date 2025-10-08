@@ -7,6 +7,7 @@ use App\Http\Controllers\Staff\StaffController;
 use App\Http\Controllers\Staff\RoleController;
 use App\Http\Controllers\Staff\PermissionController;
 use App\Http\Controllers\Staff\PlanController;
+use App\Http\Controllers\Staff\TenantController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -63,10 +64,16 @@ Route::group(['prefix' => 'panel', 'middleware' => 'auth:web', 'as' => 'panel.']
     Route::prefix('plans')->name('plans.')->group(function () {
         Route::get('/', [PlanController::class, 'index'])->name('index');
         Route::post('/', [PlanController::class, 'store'])->name('store');
-        Route::patch('/{permission}', [PlanController::class, 'update'])->name('update');
-        Route::delete('/{permission}', [PlanController::class, 'destroy'])->name('destroy');
+        Route::patch('/{plan}', [PlanController::class, 'update'])->name('update');
+        Route::delete('/{plan}', [PlanController::class, 'destroy'])->name('destroy');
     });
 
-    Route::resource('tenants', ProfileController::class);
+    Route::prefix('tenants')->name('tenants.')->group(function () {
+        Route::get('/', [TenantController::class, 'index'])->name('index');
+        Route::post('/', [TenantController::class, 'store'])->name('store');
+        Route::patch('/{tenant}', [TenantController::class, 'update'])->name('update');
+        Route::delete('/{tenant}', [TenantController::class, 'destroy'])->name('destroy');
+    });
+
 });
 require __DIR__ . '/auth.php';

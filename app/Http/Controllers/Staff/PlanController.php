@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Models\Plan;
 use Illuminate\Http\Request;
+use \App\Http\Requests\PlanAddRequest;
+use \App\Http\Requests\PlanEditRequest;
 
 class PlanController extends Controller
 {
@@ -22,33 +24,25 @@ class PlanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PlanAddRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'null|text|max:65535',
-            'price' => 'required|json',
-            'features' => 'required|json',
-            'is_free' => 'null|boolean',
-            'is_demo' => 'null|boolean',
-            'status' => 'required|string|in:active,inactive',
-        ]);
 
-        Plan::create($data);
-
-        return redirect()->route('panel.plans.index')->with('success', 'Permission created successfully!');
+        $data = $request->validated();
+        try {
+            Plan::create($data);
+            return redirect()->route('panel.plans.index')->with('success', 'Plan created successfully!');
+        } catch (\Exception $e) {
+            return redirect()->route('panel.plans.index')->with('error', 'Plan not created!');
+        }
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Plan $permission)
+    public function update(PlanEditRequest $request, Plan $permission)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'guard_name' => 'required|string|max:255',
-        ]);
+        $data = $request->validated();
 
         $permission->update($data);
 

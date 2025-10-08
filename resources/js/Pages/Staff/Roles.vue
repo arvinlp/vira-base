@@ -192,6 +192,7 @@ import DynamicToast from "@/Components/Toast.vue";
 
 const page = usePage();
 const toast = useToast();
+const errors = page.errors || {};
 
 const roles = ref([...page.props.data]);
 const permissions = ref([...page.props.permissions]); // از backend بفرست
@@ -258,11 +259,14 @@ function saveRole() {
       router.reload({ only: ["data"] });
       roleModalVisible.value = false;
     },
-    onError: () => {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save role",
+    onError: (errors) => {
+      Object.values(errors).forEach((error) => {
+        toast.add({
+          severity: "error",
+          summary: "Validation Error",
+          detail: error,
+          life: 3000,
+        });
       });
     },
   });
@@ -283,11 +287,14 @@ function savePermissions() {
       router.reload({ only: ["data"] });
       permissionModalVisible.value = false;
     },
-    onError: () => {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to update permissions",
+    onError: (errors) => {
+      Object.values(errors).forEach((error) => {
+        toast.add({
+          severity: "error",
+          summary: "Validation Error",
+          detail: error,
+          life: 3000,
+        });
       });
     },
   });
@@ -308,6 +315,16 @@ function deleteRole() {
       });
       router.reload({ only: ["data"] });
       deleteModalVisible.value = false;
+    },
+    onError: (errors) => {
+      Object.values(errors).forEach((error) => {
+        toast.add({
+          severity: "error",
+          summary: "Validation Error",
+          detail: error,
+          life: 3000,
+        });
+      });
     },
   });
 }
